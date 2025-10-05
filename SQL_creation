@@ -1,0 +1,60 @@
+--- Dimension table for timeeeeeeeeeeeee --------------- done
+create  table if not exists dim_time (
+time_id SERIAL primary  key,
+year int not null,
+month int not null,
+month_name text,
+quarter int,
+unique(year, month)
+);
+--------- DIMENSION TABLE FOR COMPANY ----------- done
+create table if not exists dim_cmp(
+cmp_id serial primary  key,
+compnay_name text unique);
+---------DIMENSION Table for DRUG -------- done
+create table if not exists dim_drug(
+drug_id serial primary key,
+drug_name text unique );
+---------- DEMOGRAPHIC ------ done
+create  table if not exists dim_demo(
+demo_id serial primary key,
+age_range text,
+gender text,
+unique(age_range, gender));
+---------- Type of DRUG ----- done
+create table if not exists dim_type(
+type_d serial primary key,
+type_of_drug text unique);
+
+-------------------- FACT TABLE ---------------------- done   
+CREATE TABLE IF NOT EXISTS fact_main (
+    fact_id BIGSERIAL PRIMARY KEY,
+    time_id INT NOT NULL,
+    cmp_id INT NOT NULL,
+    drug_id INT NOT NULL,
+    demo_id INT NOT NULL,
+    type_d INT NOT NULL,
+    icd_code TEXT,
+    description TEXT,
+    total_count BIGINT,
+    CONSTRAINT fk_time FOREIGN KEY (time_id) REFERENCES dim_time (time_id),
+    CONSTRAINT fk_cmp FOREIGN KEY (cmp_id) REFERENCES dim_cmp (cmp_id),
+    CONSTRAINT fk_drug FOREIGN KEY (drug_id) REFERENCES dim_drug (drug_id),
+    CONSTRAINT fk_demo FOREIGN KEY (demo_id) REFERENCES dim_demo (demo_id),
+    CONSTRAINT fk_type FOREIGN KEY (type_d) REFERENCES dim_type (type_d)
+);
+
+---------------- DELETE ALL THE FIELDS ---------------- USE ONLY WHEN REQUIRED "THE BIG RED BUTTON"
+TRUNCATE TABLE
+    fact_main,
+    dim_time,
+    dim_cmp,
+    dim_drug,
+    dim_demo,
+    dim_type
+RESTART IDENTITY CASCADE;
+
+
+---------------- CLEANING IN SQL BASED OR ROUGH WORK-----------------
+select * from fact_main 
+where drug_id in ('62', '64')
